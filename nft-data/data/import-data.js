@@ -1,31 +1,15 @@
 const fs = require("fs");
-const dotenv = require("dotenv");
+require('dotenv').config()
 const mongoose = require("mongoose");
-const NFT = require("./../../models/nftModel");
-
-dotenv.config({ path: "./config.env" });
-const DB = process.env.DATABASE.replace(
-  "<PASSWORD>",
-  process.env.DATABASE_PASSWORD
-);
-
-mongoose
-  .connect(DB, {
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useNewUrlParser: true,
-  })
-  .then((con) => {
-    // console.log(con.connection);
-    console.log("DB Connection Successfully");
-  });
+const NFT = require("../../models/NFT");
+const connectDB = require('../../db/connect')
 
 const nfts = JSON.parse(
   fs.readFileSync(`${__dirname}/nft-simple.json`, "utf-8")
 );
 
 //IMPORT DATA
-const importDate = async () => {
+const importData = async () => {
   try {
     await NFT.create(nfts);
     console.log("DATA successfully Loaded");
@@ -47,7 +31,7 @@ const deleteData = async () => {
 };
 
 if (process.argv[2] === "--import") {
-  importDate();
+  importData();
 } else if (process.argv[2] === "--delete") {
   deleteData();
 }
