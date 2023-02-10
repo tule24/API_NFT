@@ -14,6 +14,14 @@ if(process.env.NODE_ENV === 'development') {
     app.use(morgan("dev")) // req logger
 }
 
+// unhandledrejection là sự kiện được gọi khi không có hàm reject nào bắt promise khi nó bị reject.
+process.on("unhandledRejection", err => {
+    console.log(err.name, err.message)
+    console.log("UnhandleRejection shutting down application")
+    process.exit(1)
+})
+
+
 // SERVING TEMPLATE DEMO
 const publicPathDirectory = path.join(__dirname, '../nft-data/img')
 app.use('/image', express.static(publicPathDirectory))
@@ -37,3 +45,4 @@ const start = async () => {
 }
 
 start()
+
