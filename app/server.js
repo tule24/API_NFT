@@ -4,13 +4,12 @@ const path = require('path')
 const nftMarketRouter = require('../routes/nftMarketplace')
 const usersRouter = require('../routes/users')
 const connectDB = require('../db/connect')
-const notFoundMiddleware = require('../middlewares/not-found')
-const errorHandlerMiddleware = require('../middlewares/error-handler')
+const {notFoundMiddleware, errorHandlerMiddleware} = require('../middlewares')
 const morgan = require('morgan')
 
 const app = express()
 app.use(express.json())
-if(process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
     app.use(morgan("dev")) // req logger
 }
 

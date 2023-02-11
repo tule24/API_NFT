@@ -1,45 +1,42 @@
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
-
-// create user
-const createUser = async (req, res) => {
-    res.status(StatusCodes.CREATED).json({
-        status: "success",
-        data: req.body
-    })
-}
-
-// get user
-const getUser = async (req, res) => {
-    const { id } = req.params
-    res.status(StatusCodes.OK).json({
-        status: "success",
-        id: id,
-    })
-}
+const User = require('../models/User')
+const catchAsync = require('../utils/Async')
 
 // get all user
-const getAllUser = async (req, res) => {
+const getAllUser = catchAsync(async (req, res, next) => {
+    const users = await User.find()
     res.status(StatusCodes.OK).json({
         status: "success",
+        total: users.length,
+        data: { users }
     })
-}
+})
 
 // update user
-const updateUser = async (req, res) => {
+const updateUser = catchAsync(async (req, res, next) => {
     const { id } = req.params
-    res.status(StatusCodes.OK).json({
-        status: "success",
-    })
-}
+    const update = req.body
+
+    if(update.hasOwnProperty("password")) {
+        throw new BadRequestError("This route not update password. Please change to route changePassword")
+    }
+    
+    const user = await User.findByIdAndUpdate(id, update, { new: true, runValidators: true })
+    if (!user) {
+        throw new NotFoundError(`Not found user with id ${id}`)
+    }
+    res.status(StatusCodes.OK).json({ user })
+})
 
 // delete user
-const deleteUser = async (req, res) => {
+const deleteUser = catchAsync(async (req, res, next) => {
     const { id } = req.params
-    res.status(StatusCodes.OK).json({
-        status: "success",
-        id: id
-    })
-}
+    const user = await User.findByIdAndDelete(id)
+    if (!user) {
+        throw new NotFoundError(`Not found user with id ${id}`)
+    }
+    res.status(StatusCodes.OK).json({ user })
+})
 
-module.exports = { createUser, getUser, getAllUser, updateUser, deleteUser }
+module.exports = { getAllUser, updateUser, deleteUser }

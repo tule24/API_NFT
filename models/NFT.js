@@ -23,7 +23,8 @@ const nftSchema = new mongoose.Schema({
     },
     difficulty: {
         type: String,
-        required: [true, "Must provide difficulty"]
+        required: [true, "Must provide difficulty"],
+        enum: ["easy", "medium", "difficult"]
     },
     ratingsAverage: {
         type: Number,
